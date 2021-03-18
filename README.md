@@ -5,6 +5,11 @@ Everyone is free to adapt and use these code samples for their own needs, but th
 
 ## Samples
 
+### [AssetManagement/URPShaderAssetBundles](./AssetManagement/URPShaderAssetBundles/)
+Unity version: 2020.3
+
+How to create an AssetBundle with the shaders included in the Universal Render Pipeline (URP) package.
+
 
 ## Contributing
 See [here](CONTRIBUTING.md).
