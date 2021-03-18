@@ -14,7 +14,20 @@ Everyone likes pictures, so don't be shy to add some like this: `![Description](
 - Write a title, description and Unity version(s) used above.
 - Add an entry to the `README.md` at the root of this repository.
 - Delete this Instructions section and everything below.
+- Delete the `Utils` folder.
 - Submit a PR.
 
 ### Coding standard
 Please follow Unity's coding standard available on Ono in `unity-extra/unity-meta/ReferenceSource/CSharp/Assets/CSharpReference.cs`.
+
+### Utils
+The `Utils` folder contains common utilities and resources for use by samples.
+
+#### Editor
+- `ScriptableObjectInstantiator.cs`: Adds buttons to the Inspector to instantiate Assets from a ScriptableObject.
+
+#### Scripts
+- `SimpleCameraController.cs`: WASD Camera controller from the URP template that replicates the Scene View's logic when right clicking.
+
+#### Textures
+Collection of common textures for samples.
