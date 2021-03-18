@@ -1,4 +1,10 @@
 # sol-games-unity-samples
-# Converting to public repository
-Any and all Unity software of any description (including components) (1) whose source is to be made available other than under a Unity source code license or (2) in respect of which a public announcement is to be made concerning its inner workings, may be licensed and released only upon the prior approval of Legal.
-The process for that is to access, complete, and submit this [FORM](https://docs.google.com/forms/d/e/1FAIpQLSe3H6PARLPIkWVjdB_zMvuIuIVtrqNiGlEt1yshkMCmCMirvA/viewform).
+This is a repository of Unity code samples from the [Accelerate Solutions Games](https://unity.com/solutions/accelerate-solutions-industry) team. The samples have been created as prototypes and research conducted in the course of our work with [Integrated Success Services (ISS)](https://unity.com/success-plans) partners and [Professional Services](https://unity.com/professional-services) engagements.
+
+Everyone is free to adapt and use these code samples for their own needs, but they are strictly provided as-is. See the [license](LICENSE.md) for more details.
+
+## Samples
+
+
+## Contributing
+See [here](CONTRIBUTING.md).
