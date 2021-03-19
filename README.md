@@ -10,6 +10,11 @@ Unity version: 2020.3
 
 How to create an AssetBundle with the shaders included in the Universal Render Pipeline (URP) package.
 
+### [Lighting/ImportLightProbes](./Lighting/ImportLightProbes/)
+Unity version: 2020.3
+
+How to import externally-generated (e.g. in Blender) lightprobes in a Unity scene.
+
 
 ## Contributing
 See [here](CONTRIBUTING.md).
