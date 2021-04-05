@@ -5,6 +5,11 @@ Everyone is free to adapt and use these code samples for their own needs, but th
 
 ## Samples
 
+### [AssetManagement/LockableFolders](./AssetManagement/LockableFolders/)
+Unity version: 2020.3
+
+Lockable Asset folders that prevent changes to their contents.
+
 ### [AssetManagement/URPShaderAssetBundles](./AssetManagement/URPShaderAssetBundles/)
 Unity version: 2020.3
 
