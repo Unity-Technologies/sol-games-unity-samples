@@ -1,0 +1,8 @@
+# Disable automatic end-of-line conversion
+* -text
+
+# Selectively enable end-of-line conversion for file types that don't cause issues
+*.cs text diff=csharp
+*.cginc text
+*.shader text
+*.md text
