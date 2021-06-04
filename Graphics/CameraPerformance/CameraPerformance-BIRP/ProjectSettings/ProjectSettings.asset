@@ -148,6 +148,7 @@ PlayerSettings:
   applicationIdentifier:
     Android: com.unity.unityBIRP
     Standalone: com.unity.unity-BIRP
+    iPhone: com.unity.unity-BIRP
   buildNumber:
     Standalone: 0
     iPhone: 0
@@ -213,7 +214,7 @@ PlayerSettings:
   iOSBackgroundModes: 0
   iOSMetalForceHardShadows: 0
   metalEditorSupport: 1
-  metalAPIValidation: 1
+  metalAPIValidation: 0
   iOSRenderExtraFrameOnPause: 0
   iosCopyPluginsCodeInsteadOfSymlink: 0
   appleDeveloperTeamID: 
