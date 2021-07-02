@@ -4,13 +4,14 @@ Unity version: 2020.3
 This is a performance benchmark project for measuring the impact of using multiple Cameras in Unity's Built-in Render Pipeline and the Universal Render Pipeline (URP).
 
 ![Scene preview](images/preview.png)
-![Exploded scene view](images/exploded-view.png)
 
 From back to front, every scene has:
 - A 3D grid of spinning cubes. Each slice is a 10x10 grid of cubes. The number of slices is adjustable and is the “load factor”.
 - A single directional light source with soft shadows.
 - 2 “game” UI canvases with a panel each to simulate two popups in a mobile game.
 - A separate “overlay” UI canvas for controlling the test.
+
+![Exploded scene view](images/exploded-view.png)
 
 The projects have four scenes with different Camera configurations:
 1. The optimal scene with only the Main Camera. The “game” UI canvases are set to “Screen Space - Overlay”.
