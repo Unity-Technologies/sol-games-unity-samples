@@ -15,6 +15,11 @@ Unity version: 2020.3
 
 How to create an AssetBundle with the shaders included in the Universal Render Pipeline (URP) package.
 
+### [Graphics/CameraPerformance](./Graphics/CameraPerformance/)
+Unity version: 2020.3
+
+Performance benchmark project for measuring the impact of using multiple Cameras in Unity's Built-in Render Pipeline and the Universal Render Pipeline (URP).
+
 ### [Lighting/ImportLightProbes](./Lighting/ImportLightProbes/)
 Unity version: 2020.3
 
