@@ -20,6 +20,11 @@ Unity version: 2020.3
 
 Performance benchmark project for measuring the impact of using multiple Cameras in Unity's Built-in Render Pipeline and the Universal Render Pipeline (URP).
 
+### [Graphics/MaliCompilerReport](./Graphics/MaliCompilerReport/)
+Unity version: 2020.3.17+
+
+Tool to compile shaders to glsl and then run the Mali Offline Compiler on the result to get a report.
+
 ### [Lighting/ImportLightProbes](./Lighting/ImportLightProbes/)
 Unity version: 2020.3
 
