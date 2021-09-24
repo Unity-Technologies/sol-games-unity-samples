@@ -383,6 +383,18 @@ public class MaliShaderReport : EditorWindow
         catch (Exception e) {
             report = e.ToString();
             Debug.LogException(e);
+
+            switch (m_Compiler) {
+                case CompilerTarget.Malioc:
+                    EditorUtility.DisplayDialog("Unable to call Malioc", "Do you have ARM Mobile Studio Installed and included in the path?", "OK");
+                    break;
+                case CompilerTarget.Malisc:
+                    EditorUtility.DisplayDialog("Unable to call Malisc", "Do you have the Mali Offline Compiler installed and included in the path?", "OK");
+                    break;
+                case CompilerTarget.Custom:
+                    EditorUtility.DisplayDialog("Unable to call the compiler", "Have you set the compilers location?", "OK");
+                    break;
+            }
         }
 
         return bSuccess;
