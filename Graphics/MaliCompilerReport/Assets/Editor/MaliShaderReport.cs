@@ -18,17 +18,19 @@ public class MaliShaderReport : EditorWindow
 
         public static readonly GUIContent allKeywords = new GUIContent("All Keywords", "All keywords that can be used in this shader");
 
-        public static readonly GUIContent[] compileOptions = new GUIContent[] {
-        new GUIContent("Arm Studio - Malioc (PATH)", "Mali Offline Compiler Arm Studio"),
-        new GUIContent("Offline Compiler - Malisc (PATH)", "Mali Offline Compiler Legacy Install"),
-        new GUIContent("Custom Location", "Custom Location")
+        public static readonly GUIContent[] compileOptions = new GUIContent[]
+        {
+            new GUIContent("Arm Studio - Malioc (PATH)", "Mali Offline Compiler Arm Studio"),
+            new GUIContent("Offline Compiler - Malisc (PATH)", "Mali Offline Compiler Legacy Install"),
+            new GUIContent("Custom Location", "Custom Location")
         };
 
-        public static readonly GUIContent[] shaderTypes = new GUIContent[] {
-        new GUIContent("Vertex Shader", "Vertex shader report"),
-        new GUIContent("Geometry Shader", "Geometry shader report"),
-        new GUIContent("Fragment Shader", "Fragment shader report"),
-    };
+        public static readonly GUIContent[] shaderTypes = new GUIContent[]
+        {
+            new GUIContent("Vertex Shader", "Vertex shader report"),
+            new GUIContent("Geometry Shader", "Geometry shader report"),
+            new GUIContent("Fragment Shader", "Fragment shader report"),
+        };
     }
 
     // NOTE: Keep this the same as Content.shaderTypes
@@ -72,9 +74,8 @@ public class MaliShaderReport : EditorWindow
         public List<List<string>> keywords;
         public List<string> keywordHint;
         public string name;
-               
-        public ShaderData.Pass pass;
 
+        public ShaderData.Pass pass;
 
         public PassInfo()
         {
@@ -84,7 +85,6 @@ public class MaliShaderReport : EditorWindow
             name = "";
             pass = null;
         }
-
     }
 
     private List<PassInfo> m_Passes = new List<PassInfo>();
@@ -96,8 +96,6 @@ public class MaliShaderReport : EditorWindow
     private int m_lines = 0;
 
     private Dictionary<ShaderType, string> m_Report = new Dictionary<ShaderType, string>();
-
-
 
     // Add menu named "My Window" to the Window menu
     [MenuItem("Shader/Mali Offline Compiler")]
@@ -112,11 +110,12 @@ public class MaliShaderReport : EditorWindow
     {
         // Choose the compiler
         m_Compiler = (CompilerTarget)EditorGUILayout.Popup(Content.compilerContent, (int)m_Compiler, Content.compileOptions);
-        if(m_Compiler == CompilerTarget.Custom) 
+        if (m_Compiler == CompilerTarget.Custom)
         {
             EditorGUILayout.BeginHorizontal();
             m_CompilerPath = EditorGUILayout.TextField(m_CompilerPath);
-            if (GUILayout.Button("...")) {
+            if (GUILayout.Button("..."))
+            {
 #if UNITY_STANDALONE_WIN
                 m_CompilerPath = EditorUtility.OpenFilePanel("Mali Offline Compiler", "", "exe");
 #else
@@ -133,7 +132,6 @@ public class MaliShaderReport : EditorWindow
         // we only do this once when a shader is selected.
         ProcessShader(s);
 
-
         // Display the keywords
         {
             GUILayout.Label(Content.allKeywords, EditorStyles.boldLabel);
@@ -141,36 +139,41 @@ public class MaliShaderReport : EditorWindow
             EditorGUILayout.BeginVertical(GUILayout.MaxHeight(40.0f));
             m_KeywordScroll = EditorGUILayout.BeginScrollView(m_KeywordScroll);
             EditorGUILayout.BeginHorizontal();
-            for (int i = 0; i < m_Keywords.Count; i++) {
+            for (int i = 0; i < m_Keywords.Count; i++)
+            {
                 GUILayout.Label(m_Keywords[i], EditorStyles.label);
             }
+
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndScrollView();
             EditorGUILayout.EndVertical();
         }
 
-
         // Select Pass to investigate
         GUILayout.Label("Pass:", EditorStyles.boldLabel);
-        if (m_PassNames != null) {
-            SetSelectedPass( EditorGUILayout.Popup(m_SelectedPass, m_PassNames));
+        if (m_PassNames != null)
+        {
+            SetSelectedPass(EditorGUILayout.Popup(m_SelectedPass, m_PassNames));
         }
-
 
         PassInfo info;
 
-        if(m_SelectedPass>=0 && m_SelectedPass< m_Passes.Count) {
+        if (m_SelectedPass >= 0 && m_SelectedPass < m_Passes.Count)
+        {
             info = m_Passes[m_SelectedPass];
         }
-        else {
+        else
+        {
             info = defaultPassInfo;
         }
 
-        if (m_SelectedKeywords.Count != info.keywords.Count) {
+        if (m_SelectedKeywords.Count != info.keywords.Count)
+        {
             SetSelectedPass(m_SelectedPass, true);
         }
-        
+
         EditorGUILayout.BeginVertical();
+
         // Pass Keyword selection
         {
             EditorGUILayout.BeginHorizontal();
@@ -180,18 +183,21 @@ public class MaliShaderReport : EditorWindow
             GUILayout.Label("Pass Keywords:");
             m_PassKeywordScroll = EditorGUILayout.BeginScrollView(m_PassKeywordScroll);
             EditorGUILayout.BeginVertical();
-            for (int i = 0; i < m_SelectedKeywords.Count; i++) {
+            for (int i = 0; i < m_SelectedKeywords.Count; i++)
+            {
                 string[] options = info.keywords[i].ToArray();
 
                 if (options.Length == 0)
                     continue;
 
-                if (options[0].Length == 0) {
+                if (options[0].Length == 0)
+                {
                     options[0] = k_NA;
                 }
 
                 m_SelectedKeywords[i] = EditorGUILayout.Popup(info.keywordHint[i], m_SelectedKeywords[i], options);
             }
+
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndScrollView();
         }
@@ -202,11 +208,14 @@ public class MaliShaderReport : EditorWindow
             EditorGUILayout.BeginVertical();
 
             string value = null;
-            for (int i = 0; i < k_ReportOrder.Length; i++) {
-                if (m_Report.TryGetValue(k_ReportOrder[i], out value)) {
+            for (int i = 0; i < k_ReportOrder.Length; i++)
+            {
+                if (m_Report.TryGetValue(k_ReportOrder[i], out value))
+                {
                     EditorGUILayout.BeginHorizontal();
                     GUILayout.Label(Content.shaderTypes[i]);
-                    if (GUILayout.Button("Copy text")) {
+                    if (GUILayout.Button("Copy text"))
+                    {
                         EditorGUIUtility.systemCopyBuffer = value;
                     }
 
@@ -222,25 +231,27 @@ public class MaliShaderReport : EditorWindow
         EditorGUILayout.EndVertical();
         EditorGUILayout.BeginHorizontal();
 
-
         GUI.enabled = info != defaultPassInfo;
-        if (GUILayout.Button("Compile & Report")) {
+        if (GUILayout.Button("Compile & Report"))
+        {
             CompileAndReport();
         }
+
         GUI.enabled = true;
 
-        if (GUILayout.Button("Refresh Shader")) {
+        if (GUILayout.Button("Refresh Shader"))
+        {
             // reprocess the shader
             ProcessShader(s, true);
         }
 
-        if (GUILayout.Button("Clear Report")) {
+        if (GUILayout.Button("Clear Report"))
+        {
             m_Report.Clear();
         }
 
         EditorGUILayout.EndHorizontal();
     }
-
 
     void CompileAndReport()
     {
@@ -254,8 +265,10 @@ public class MaliShaderReport : EditorWindow
 
         List<ShaderType> supported = new List<ShaderType>();
 
-        for (int i=0; i<types.Length; i++) {
-            if (m_Passes[m_SelectedPass].pass.HasShaderStage(types[i])) {
+        for (int i = 0; i < types.Length; i++)
+        {
+            if (m_Passes[m_SelectedPass].pass.HasShaderStage(types[i]))
+            {
                 supported.Add(types[i]);
             }
         }
@@ -265,14 +278,15 @@ public class MaliShaderReport : EditorWindow
 
     string[] GenerateKeywords()
     {
-        if (m_SelectedKeywords.Count == 0) {
+        if (m_SelectedKeywords.Count == 0)
+        {
             return new string[0];
         }
 
         List<string> used = new List<string>();
 
-        for (int i = 0; i < m_SelectedKeywords.Count; i++) {
-
+        for (int i = 0; i < m_SelectedKeywords.Count; i++)
+        {
             string keyword = m_Passes[m_SelectedPass].keywords[i][m_SelectedKeywords[i]];
 
             if (keyword.Length == 0)
@@ -286,12 +300,11 @@ public class MaliShaderReport : EditorWindow
 
     bool CompileShaderToFile(string path, string[] keywords)
     {
-        Debug.Log("Compiling " + path + " with "+keywords.Length+" keywords");
+        Debug.Log("Compiling " + path + " with " + keywords.Length + " keywords");
         ShaderData.VariantCompileInfo result = m_Passes[m_SelectedPass].pass.CompileVariant(ShaderType.Vertex, keywords, ShaderCompilerPlatform.GLES3x, BuildTarget.Android);
 
-
-        if (result.Success) {
-
+        if (result.Success)
+        {
             // Convert a byte array to a C# string. 
             string code = Encoding.ASCII.GetString(result.ShaderData);
 
@@ -311,8 +324,9 @@ public class MaliShaderReport : EditorWindow
 
     string GetCompiler()
     {
-        switch (m_Compiler) {
-            case CompilerTarget.Malioc: 
+        switch (m_Compiler)
+        {
+            case CompilerTarget.Malioc:
                 return "malioc.exe";
 
             case CompilerTarget.Malisc:
@@ -324,15 +338,18 @@ public class MaliShaderReport : EditorWindow
 
         return "";
     }
-    
+
     void Report(string path, List<ShaderType> supported)
     {
         m_Report.Clear();
         string log;
-        foreach(ShaderType type in supported){
-            if(Report(path, type, out log)) {
+        foreach (ShaderType type in supported)
+        {
+            if (Report(path, type, out log))
+            {
                 m_Report.Add(type, log);
             }
+
             //Debug.Log(log);
         }
     }
@@ -340,8 +357,8 @@ public class MaliShaderReport : EditorWindow
     bool Report(string path, ShaderType target, out string report)
     {
         bool bSuccess = false;
-        try {
-
+        try
+        {
             m_lines = 0;
             m_CompilerOutput.Clear();
 
@@ -355,7 +372,8 @@ public class MaliShaderReport : EditorWindow
 
             compiler.OutputDataReceived += Compiler_OutputDataReceived;
 
-            switch (target) {
+            switch (target)
+            {
                 case ShaderType.Vertex:
                     compiler.StartInfo.Arguments = "-v " + path + " -D VERTEX";
                     break;
@@ -373,18 +391,18 @@ public class MaliShaderReport : EditorWindow
 
             compiler.WaitForExit();
 
-
             int ExitCode = compiler.ExitCode;
-
 
             report = m_CompilerOutput.ToString();
             bSuccess = true;
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
             report = e.ToString();
             Debug.LogException(e);
 
-            switch (m_Compiler) {
+            switch (m_Compiler)
+            {
                 case CompilerTarget.Malioc:
                     EditorUtility.DisplayDialog("Unable to call Malioc", "Do you have ARM Mobile Studio Installed and included in the path?", "OK");
                     break;
@@ -402,7 +420,8 @@ public class MaliShaderReport : EditorWindow
 
     private void Compiler_OutputDataReceived(object sender, DataReceivedEventArgs e)
     {
-        if (!String.IsNullOrEmpty(e.Data)) {
+        if (!String.IsNullOrEmpty(e.Data))
+        {
             m_lines++;
             m_CompilerOutput.Append(e.Data);
             m_CompilerOutput.Append('\n');
@@ -410,28 +429,26 @@ public class MaliShaderReport : EditorWindow
     }
 
     // TODO: Extract the shader compiled hlsl to glsl for the shader and include that in the report
-    void ExtractCode(string path, ShaderType type)
-    {
+    void ExtractCode(string path, ShaderType type) { }
 
-    }
-
-
-
-    void ProcessShader(Shader target, bool force =false)
+    void ProcessShader(Shader target, bool force = false)
     {
         // Reset
-        if(target == null) {
+        if (target == null)
+        {
             m_Keywords.Clear();
             m_Passes.Clear();
             m_SelectedPass = -1;
             m_Target = null;
             m_PassNames = null;
         }
-        else if( target != m_Target || force) {
+        else if (target != m_Target || force)
+        {
             m_Keywords.Clear();
             m_Passes.Clear();
 
-            if (!force) {
+            if (!force)
+            {
                 m_SelectedPass = 0;
             }
 
@@ -444,9 +461,11 @@ public class MaliShaderReport : EditorWindow
 
             StringBuilder sb = new StringBuilder(k_MaxHintLength * 3);
 
-            for(int sub = 0; sub < data.SubshaderCount; sub++) {
+            for (int sub = 0; sub < data.SubshaderCount; sub++)
+            {
                 ShaderData.Subshader subshader = data.GetSubshader(sub);
-                for(int p = 0; p < subshader.PassCount; p++) {
+                for (int p = 0; p < subshader.PassCount; p++)
+                {
                     PassInfo passInfo = new PassInfo();
                     passInfo.subShader = sub;
                     passInfo.pass = subshader.GetPass(p);
@@ -455,13 +474,16 @@ public class MaliShaderReport : EditorWindow
                     ParseKeywords(passInfo.pass.SourceCode, ref passInfo.keywords);
 
                     // Create some label hints
-                    for(int i=0; i <passInfo.keywords.Count; i++) {
-
-                        for (int j = 0; j < passInfo.keywords[i].Count; j++) {
-                            if (passInfo.keywords[i][j].Length > 0) {
+                    for (int i = 0; i < passInfo.keywords.Count; i++)
+                    {
+                        for (int j = 0; j < passInfo.keywords[i].Count; j++)
+                        {
+                            if (passInfo.keywords[i][j].Length > 0)
+                            {
                                 sb.Append(passInfo.keywords[i][j]);
 
-                                if (sb.Length > k_MaxHintLength) {
+                                if (sb.Length > k_MaxHintLength)
+                                {
                                     sb.Remove(k_MaxHintLength, sb.Length - k_MaxHintLength);
                                     sb[15] = '.';
                                     sb[16] = '.';
@@ -469,10 +491,10 @@ public class MaliShaderReport : EditorWindow
 
                                     break;
                                 }
-                                else if (sb.Length == k_MaxHintLength) {
+                                else if (sb.Length == k_MaxHintLength)
+                                {
                                     break;
                                 }
-
                             }
                         }
 
@@ -487,7 +509,8 @@ public class MaliShaderReport : EditorWindow
 
             if (m_SelectedPass < 0)
                 m_SelectedPass = 0;
-            else if(m_SelectedPass >= m_Passes.Count) {
+            else if (m_SelectedPass >= m_Passes.Count)
+            {
                 m_SelectedPass = m_Passes.Count - 1;
             }
 
@@ -499,34 +522,33 @@ public class MaliShaderReport : EditorWindow
 
     void SetSelectedPass(int index, bool init = false)
     {
-        if(init || index != m_SelectedPass) {
+        if (init || index != m_SelectedPass)
+        {
             m_SelectedPass = index;
 
             m_SelectedKeywords.Clear();
 
-
-            if(m_SelectedPass >= 0 && m_SelectedPass < m_Passes.Count) {
+            if (m_SelectedPass >= 0 && m_SelectedPass < m_Passes.Count)
+            {
                 PassInfo info = m_Passes[m_SelectedPass];
 
-                for(int i=0; i< info.keywords.Count; i++) {
+                for (int i = 0; i < info.keywords.Count; i++)
+                {
                     m_SelectedKeywords.Add(0);
                 }
             }
-            
         }
     }
 
-    void ParseKeywords(
-        string code,
-        ref List<List<string>> keywords        
-        )
+    void ParseKeywords(string code, ref List<List<string>> keywords)
     {
         keywords.Clear();
 
         int pragmaIndex = code.IndexOf("#pragma");
 
         // TODO: Change this to just use index of the string and avoid this substring nonscence as that just creating unnecessary garbage
-        while (pragmaIndex != -1) {
+        while (pragmaIndex != -1)
+        {
             int endOfLine = code.IndexOf('\n', pragmaIndex);
             ParsePragmaString(code.Substring(pragmaIndex, endOfLine - pragmaIndex), ref keywords);
             code = code.Substring(endOfLine + 1);
@@ -538,7 +560,8 @@ public class MaliShaderReport : EditorWindow
     {
         // Handle a multi_compile and its variants
         int indexStart = pragma.IndexOf("multi_compile");
-        if (indexStart != -1) {
+        if (indexStart != -1)
+        {
             List<string> keys = new List<string>();
 
             indexStart = pragma.IndexOf(' ', indexStart);
@@ -550,27 +573,35 @@ public class MaliShaderReport : EditorWindow
 
             string[] keywords = pragma.Split(' ');
 
-            for(int i=0; i < keywords.Length; i++) {
-                if (keywords[i].Equals("_")) {
+            for (int i = 0; i < keywords.Length; i++)
+            {
+                if (keywords[i].Equals("_"))
+                {
                     keys.Add("");
                 }
-                else {
+                else
+                {
                     keys.Add(keywords[i]);
 
-                    if (!m_Keywords.Contains(keywords[i])) {
+                    if (!m_Keywords.Contains(keywords[i]))
+                    {
                         m_Keywords.Add(keywords[i]);
                     }
                 }
             }
 
-            if (keys.Count > 0) {
+            if (keys.Count > 0)
+            {
                 outkeywords.Add(keys);
             }
         }
+
         // Handle a shader_feature and its variants
-        else {
+        else
+        {
             indexStart = pragma.IndexOf("shader_feature");
-            if (indexStart != -1) {
+            if (indexStart != -1)
+            {
                 List<string> keys = new List<string>();
 
                 indexStart = pragma.IndexOf(' ', indexStart);
@@ -582,27 +613,32 @@ public class MaliShaderReport : EditorWindow
 
                 string[] keywords = pragma.Split(' ');
 
-                for (int i = 0; i < keywords.Length; i++) {
-                    if (keywords[i].Equals("_")) {
+                for (int i = 0; i < keywords.Length; i++)
+                {
+                    if (keywords[i].Equals("_"))
+                    {
                         keys.Add("");
                     }
-                    else {
+                    else
+                    {
                         keys.Add(keywords[i]);
-                        if (!m_Keywords.Contains(keywords[i])) {
+                        if (!m_Keywords.Contains(keywords[i]))
+                        {
                             m_Keywords.Add(keywords[i]);
                         }
                     }
                 }
 
-                if(keywords.Length == 1) {
+                if (keywords.Length == 1)
+                {
                     keys.Insert(0, "");
                 }
 
-                if (keys.Count > 0) {
+                if (keys.Count > 0)
+                {
                     outkeywords.Add(keys);
                 }
             }
         }
     }
-
 }
