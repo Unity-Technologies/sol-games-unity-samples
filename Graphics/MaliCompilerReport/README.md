@@ -25,6 +25,6 @@ To use this you will need to have either installed or downloaded the Mali Offlin
 ## Notes
 - If you change the shader you will need to hit Refresh Shader for any changes to keywords to be reflected
 - Clear Report will remove the report
-- If you select custom you must enter the compiler location e.g. C:\Program Files\Arm\Mali Developer Tools\Mali Offline Compiler v6.4.0\malisc.exe
+- If you select custom you must enter the compiler location e.g. `C:\Program Files\Arm\Mali Developer Tools\Mali Offline Compiler v6.4.0\malisc.exe`
 - Copy text will just copy the text to clipboard
-- When a shader is compiled it created as a .shader file in the project Temp folder
+- When a shader is compiled it created as a `.shader` file in the project `Temp` folder
