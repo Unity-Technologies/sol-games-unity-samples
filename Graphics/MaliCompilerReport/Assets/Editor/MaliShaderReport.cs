@@ -241,7 +241,7 @@ public class MaliShaderReport : EditorWindow
 
         if (GUILayout.Button("Refresh Shader"))
         {
-            // reprocess the shader
+            // preprocess the shader
             ProcessShader(s, true);
         }
 
@@ -317,6 +317,7 @@ public class MaliShaderReport : EditorWindow
             //Debug.Log("Compiled, Bytes:"+ result.ShaderData.Length);
             return true;
         }
+
 
         Debug.Log("Compile Failed");
         return false;
@@ -431,6 +432,8 @@ public class MaliShaderReport : EditorWindow
     // TODO: Extract the shader compiled hlsl to glsl for the shader and include that in the report
     void ExtractCode(string path, ShaderType type) { }
 
+    
+
     void ProcessShader(Shader target, bool force = false)
     {
         // Reset
@@ -495,6 +498,10 @@ public class MaliShaderReport : EditorWindow
                                 {
                                     break;
                                 }
+                                else if(j < passInfo.keywords[i].Count - 1)
+                                {
+                                    sb.Append(',');
+                                }
                             }
                         }
 
@@ -540,38 +547,174 @@ public class MaliShaderReport : EditorWindow
         }
     }
 
+    struct Range
+    {
+        public int startLine;
+        public int endLine;
+    }
+
+
+    int FindNextValidMultiLineStart(string code, int index)
+    {
+        int possibleIndex = code.IndexOf("/*", index);
+
+        // early out
+        if (possibleIndex == -1)
+            return -1;
+
+
+        // determine if its hidden by a single comment
+        int previousLineIndex = code.LastIndexOf('\n', possibleIndex - 1, possibleIndex);
+
+        int commentStart = code.IndexOf('/', previousLineIndex, possibleIndex - previousLineIndex);
+        while (commentStart != -1) {
+            // if were a single line comment just start the search again at the 
+            if (code[commentStart + 1] == '/') {
+                return FindNextValidMultiLineStart(code, possibleIndex + 2);
+            }
+
+            if (possibleIndex - (commentStart + 1) >= 2) {
+                commentStart = code.IndexOf('/', commentStart + 1, possibleIndex - (commentStart + 1));
+            }
+            else
+                break;
+        }
+
+
+        return possibleIndex;
+    }
+
+    int FindNextValidMultiLineEnd(string code, int index)
+    {
+        // there is no checking to be done as if were in a valid multi line comment it doesnt end till those 2 characters are found
+        int possibleIndex = code.IndexOf("*/", index);
+        return possibleIndex;
+    }
+
+    string StripMultilineComments(string code)
+    {
+        List<Range> ranges = new List<Range>();
+
+        int index = FindNextValidMultiLineStart(code, 0);
+        Range range = new Range();
+
+        while (index != -1) {
+
+            range.startLine = index;
+
+            index = FindNextValidMultiLineEnd(code, index + 2);
+
+            range.endLine = index + 2;
+
+            index = FindNextValidMultiLineStart(code, range.endLine);
+
+            ranges.Add(range);
+        }
+
+        if (ranges.Count == 0)
+            return code;
+
+        StringBuilder sb = new StringBuilder(code.Length);
+
+        int startIndex = 0;
+        int stringIndex = 0;
+
+        if(ranges[0].startLine == 0) {
+            startIndex++;
+            stringIndex = ranges[0].endLine;
+        }
+
+        int len = 0;
+
+        for(int idx = startIndex; idx< ranges.Count; idx++) {
+            len = ranges[idx].startLine - stringIndex;
+            sb.Append(code, stringIndex, len);
+            stringIndex = ranges[idx].endLine;
+        }
+
+        if(stringIndex < code.Length-1) {
+            len = code.Length - stringIndex;
+            sb.Append(code, stringIndex, len);
+        }
+
+        return sb.ToString();
+    }
+
+    int FindNextValidPragma(int Start, string code)
+    {
+        int possibleIndex = code.IndexOf("#pragma", Start);
+
+        // early out
+        if (possibleIndex == -1)
+            return -1;
+
+        int endOfLineIndex = code.IndexOf('\n', possibleIndex);
+
+
+        // determine if its hidden by a single comment
+        int previousLineIndex = code.LastIndexOf('\n', possibleIndex-1, possibleIndex);
+
+        int commentStart = code.IndexOf('/', previousLineIndex, possibleIndex - previousLineIndex);
+        while (commentStart != -1) {
+            // if were a single line comment just start the search again at the 
+            if (code[commentStart+1] == '/') {
+                return FindNextValidPragma(endOfLineIndex, code);
+            }
+
+            if (possibleIndex - (commentStart + 1) >= 2) {
+                commentStart = code.IndexOf('/', commentStart + 1, possibleIndex - (commentStart + 1));
+            }
+            else
+                break;
+        }
+
+        return possibleIndex;
+    }
+
     void ParseKeywords(string code, ref List<List<string>> keywords)
     {
         keywords.Clear();
 
-        int pragmaIndex = code.IndexOf("#pragma");
+        // find and strip any multi line comments
+        code = StripMultilineComments(code);
 
-        // TODO: Change this to just use index of the string and avoid this substring nonscence as that just creating unnecessary garbage
+        // we know just search the code string
+        int pragmaIndex = FindNextValidPragma(0, code);
+
         while (pragmaIndex != -1)
         {
             int endOfLine = code.IndexOf('\n', pragmaIndex);
-            ParsePragmaString(code.Substring(pragmaIndex, endOfLine - pragmaIndex), ref keywords);
-            code = code.Substring(endOfLine + 1);
-            pragmaIndex = code.IndexOf("#pragma");
+            ParsePragmaString(code, ref keywords, pragmaIndex, endOfLine - pragmaIndex);
+            pragmaIndex = FindNextValidPragma(endOfLine+1, code);
         }
     }
 
-    void ParsePragmaString(string pragma, ref List<List<string>> outkeywords)
+    void ParsePragmaString(string code, ref List<List<string>> outkeywords, int index, int length)
     {
+
+        // lets remove any single comment from this line
+        int commentStart = code.IndexOf("//", index, length);
+        if (commentStart != -1) {
+            length = commentStart - index;
+        }
+
         // Handle a multi_compile and its variants
-        int indexStart = pragma.IndexOf("multi_compile");
+        int indexStart = code.IndexOf("multi_compile", index, length);
         if (indexStart != -1)
         {
             List<string> keys = new List<string>();
 
-            indexStart = pragma.IndexOf(' ', indexStart);
+            indexStart = code.IndexOf(' ', indexStart, length - (indexStart - index));
 
             if (indexStart == -1)
                 return;
 
-            pragma = pragma.Substring(indexStart + 1);
+            int substringLength = length - ((indexStart - index) + 1);
 
-            string[] keywords = pragma.Split(' ');
+            // we still do a substring here as it makes the spliting easy but at least its only one substring now
+            code = code.Substring(indexStart + 1, substringLength);
+
+            string[] keywords = code.Split(' ');
 
             for (int i = 0; i < keywords.Length; i++)
             {
@@ -599,19 +742,22 @@ public class MaliShaderReport : EditorWindow
         // Handle a shader_feature and its variants
         else
         {
-            indexStart = pragma.IndexOf("shader_feature");
+            indexStart = code.IndexOf("shader_feature", index, length);
             if (indexStart != -1)
             {
                 List<string> keys = new List<string>();
 
-                indexStart = pragma.IndexOf(' ', indexStart);
+                indexStart = code.IndexOf(' ', indexStart, length - (indexStart - index));
 
                 if (indexStart == -1)
                     return;
 
-                pragma = pragma.Substring(indexStart + 1);
+                int substringLength = length - ((indexStart - index) + 1);
 
-                string[] keywords = pragma.Split(' ');
+                // we still do a substring here as it makes the spliting easy but at least its only one substring now
+                code = code.Substring(indexStart + 1, substringLength);
+
+                string[] keywords = code.Split(' ');
 
                 for (int i = 0; i < keywords.Length; i++)
                 {
