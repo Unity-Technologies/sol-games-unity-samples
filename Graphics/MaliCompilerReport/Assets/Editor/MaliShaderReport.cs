@@ -221,7 +221,7 @@ public class MaliShaderReport : EditorWindow
 
                     EditorGUILayout.EndHorizontal();
 
-                    GUILayout.Box(value);
+                    GUILayout.Box(value, EditorStyles.helpBox);
                 }
             }
 
@@ -674,6 +674,8 @@ public class MaliShaderReport : EditorWindow
     void ParseKeywords(string code, ref List<List<string>> keywords)
     {
         keywords.Clear();
+
+        Debug.Log(code);
 
         // find and strip any multi line comments
         code = StripMultilineComments(code);
