@@ -430,9 +430,10 @@ public class MaliShaderReport : EditorWindow
     }
 
     // TODO: Extract the shader compiled hlsl to glsl for the shader and include that in the report
-    void ExtractCode(string path, ShaderType type) { }
-
+    void ExtractCode(string path, ShaderType type) 
+    { 
     
+    }
 
     void ProcessShader(Shader target, bool force = false)
     {
@@ -562,18 +563,20 @@ public class MaliShaderReport : EditorWindow
         if (possibleIndex == -1)
             return -1;
 
-
         // determine if its hidden by a single comment
         int previousLineIndex = code.LastIndexOf('\n', possibleIndex - 1, possibleIndex);
 
         int commentStart = code.IndexOf('/', previousLineIndex, possibleIndex - previousLineIndex);
-        while (commentStart != -1) {
+        while (commentStart != -1) 
+        {
             // if were a single line comment just start the search again at the 
-            if (code[commentStart + 1] == '/') {
+            if (code[commentStart + 1] == '/') 
+            {
                 return FindNextValidMultiLineStart(code, possibleIndex + 2);
             }
 
-            if (possibleIndex - (commentStart + 1) >= 2) {
+            if (possibleIndex - (commentStart + 1) >= 2) 
+            {
                 commentStart = code.IndexOf('/', commentStart + 1, possibleIndex - (commentStart + 1));
             }
             else
@@ -598,8 +601,8 @@ public class MaliShaderReport : EditorWindow
         int index = FindNextValidMultiLineStart(code, 0);
         Range range = new Range();
 
-        while (index != -1) {
-
+        while (index != -1) 
+        {
             range.startLine = index;
 
             index = FindNextValidMultiLineEnd(code, index + 2);
@@ -619,20 +622,23 @@ public class MaliShaderReport : EditorWindow
         int startIndex = 0;
         int stringIndex = 0;
 
-        if(ranges[0].startLine == 0) {
+        if(ranges[0].startLine == 0) 
+        {
             startIndex++;
             stringIndex = ranges[0].endLine;
         }
 
         int len = 0;
 
-        for(int idx = startIndex; idx< ranges.Count; idx++) {
+        for(int idx = startIndex; idx< ranges.Count; idx++) 
+        {
             len = ranges[idx].startLine - stringIndex;
             sb.Append(code, stringIndex, len);
             stringIndex = ranges[idx].endLine;
         }
 
-        if(stringIndex < code.Length-1) {
+        if(stringIndex < code.Length-1) 
+        {
             len = code.Length - stringIndex;
             sb.Append(code, stringIndex, len);
         }
@@ -655,13 +661,16 @@ public class MaliShaderReport : EditorWindow
         int previousLineIndex = code.LastIndexOf('\n', possibleIndex-1, possibleIndex);
 
         int commentStart = code.IndexOf('/', previousLineIndex, possibleIndex - previousLineIndex);
-        while (commentStart != -1) {
+        while (commentStart != -1) 
+        {
             // if were a single line comment just start the search again at the 
-            if (code[commentStart+1] == '/') {
+            if (code[commentStart+1] == '/') 
+            {
                 return FindNextValidPragma(endOfLineIndex, code);
             }
 
-            if (possibleIndex - (commentStart + 1) >= 2) {
+            if (possibleIndex - (commentStart + 1) >= 2) 
+            {
                 commentStart = code.IndexOf('/', commentStart + 1, possibleIndex - (commentStart + 1));
             }
             else
@@ -693,10 +702,10 @@ public class MaliShaderReport : EditorWindow
 
     void ParsePragmaString(string code, ref List<List<string>> outkeywords, int index, int length)
     {
-
         // lets remove any single comment from this line
         int commentStart = code.IndexOf("//", index, length);
-        if (commentStart != -1) {
+        if (commentStart != -1)
+        {
             length = commentStart - index;
         }
 
