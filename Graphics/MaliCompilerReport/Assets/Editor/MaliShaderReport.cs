@@ -167,6 +167,8 @@ public class MaliShaderReport : EditorWindow
             info = defaultPassInfo;
         }
 
+        // there is a chance we have a valid selected pass but the keyword count doesnt match
+        // if that happens we need to reinitialise (usually only happens due to a recompile of the c#)
         if (m_SelectedKeywords.Count != info.keywords.Count)
         {
             SetSelectedPass(m_SelectedPass, true);
@@ -195,7 +197,7 @@ public class MaliShaderReport : EditorWindow
                     options[0] = k_NA;
                 }
 
-                m_SelectedKeywords[i] = EditorGUILayout.Popup(info.keywordHint[i], m_SelectedKeywords[i], options);
+                m_SelectedKeywords[i] = EditorGUILayout.Popup(info.keywordHint[i], Mathf.Clamp(m_SelectedKeywords[i], 0, options.Length), options);
             }
 
             EditorGUILayout.EndVertical();
@@ -453,7 +455,6 @@ public class MaliShaderReport : EditorWindow
             }
 
             m_Target = target;
-            int count = target.passCount;
 
             ShaderData data = ShaderUtil.GetShaderData(target);
 
@@ -642,32 +643,36 @@ public class MaliShaderReport : EditorWindow
 
     int FindNextValidPragma(int start, string code)
     {
+        // early out
+        if (start >= code.Length)
+            return -1;
+
         int possibleIndex = code.IndexOf("#pragma", start);
 
         // early out
         if (possibleIndex == -1)
             return -1;
 
-        int endOfLineIndex = code.IndexOf('\n', possibleIndex);
+        // is it the start of the string? if so we can early out
+        if (possibleIndex == 0)
+            return possibleIndex;
 
         // determine if its hidden by a single comment
-        int previousLineIndex = code.LastIndexOf('\n', possibleIndex - 1, possibleIndex);
+        int previousLineIndex = Mathf.Max( code.LastIndexOf('\n', possibleIndex - 1, possibleIndex), 0);
 
-        int commentStart = code.IndexOf('/', previousLineIndex, possibleIndex - previousLineIndex);
-        while (commentStart != -1)
+        int commentStart = code.IndexOf("//", previousLineIndex, possibleIndex - previousLineIndex);
+
+        // if we're at a single line comment just start the search again on the next line
+        if (commentStart != -1)
         {
-            // if we're at a single line comment just start the search again on the next line
-            if (code[commentStart + 1] == '/')
+            // determine the end of the string
+            int endOfLineIndex = code.IndexOf('\n', possibleIndex);
+            if (endOfLineIndex == -1)
             {
-                return FindNextValidPragma(endOfLineIndex, code);
+                endOfLineIndex = code.Length - 1;
             }
 
-            if (possibleIndex - (commentStart + 1) >= 2)
-            {
-                commentStart = code.IndexOf('/', commentStart + 1, possibleIndex - (commentStart + 1));
-            }
-            else
-                break;
+            return FindNextValidPragma(endOfLineIndex, code);
         }
 
         return possibleIndex;
@@ -676,8 +681,6 @@ public class MaliShaderReport : EditorWindow
     void ParseKeywords(string code, ref List<List<string>> keywords)
     {
         keywords.Clear();
-
-        Debug.Log(code);
 
         // find and strip any multi line comments
         code = StripMultilineComments(code);
