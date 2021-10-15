@@ -564,7 +564,7 @@ public class MaliShaderReport : EditorWindow
         int commentStart = code.IndexOf('/', previousLineIndex, possibleIndex - previousLineIndex);
         while (commentStart != -1)
         {
-            // if we're at a single line comment just start the search again after the original "/*" we found 
+            // if we're at a single line comment just start the search again after the original "/*" we found
             if (code[commentStart + 1] == '/')
             {
                 return FindNextValidMultiLineStart(code, possibleIndex + 2);
@@ -656,7 +656,7 @@ public class MaliShaderReport : EditorWindow
         int commentStart = code.IndexOf('/', previousLineIndex, possibleIndex - previousLineIndex);
         while (commentStart != -1)
         {
-            // if were a single line comment just start the search again at the 
+            // if we're at a single line comment just start the search again on the next line
             if (code[commentStart + 1] == '/')
             {
                 return FindNextValidPragma(endOfLineIndex, code);
