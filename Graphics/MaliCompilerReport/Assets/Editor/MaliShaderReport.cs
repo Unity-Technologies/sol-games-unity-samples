@@ -640,9 +640,9 @@ public class MaliShaderReport : EditorWindow
         return sb.ToString();
     }
 
-    int FindNextValidPragma(int Start, string code)
+    int FindNextValidPragma(int start, string code)
     {
-        int possibleIndex = code.IndexOf("#pragma", Start);
+        int possibleIndex = code.IndexOf("#pragma", start);
 
         // early out
         if (possibleIndex == -1)
