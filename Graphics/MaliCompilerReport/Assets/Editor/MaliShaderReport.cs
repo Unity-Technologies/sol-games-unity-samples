@@ -546,8 +546,8 @@ public class MaliShaderReport : EditorWindow
 
     struct Range
     {
-        public int startLine;
-        public int endLine;
+        public int startIndex;
+        public int endIndex;
     }
 
     int FindNextValidMultiLineStart(string code, int index)
@@ -597,13 +597,13 @@ public class MaliShaderReport : EditorWindow
 
         while (index != -1)
         {
-            range.startLine = index;
+            range.startIndex = index;
 
             index = FindNextValidMultiLineEnd(code, index + 2);
 
-            range.endLine = index + 2;
+            range.endIndex = index + 2;
 
-            index = FindNextValidMultiLineStart(code, range.endLine);
+            index = FindNextValidMultiLineStart(code, range.endIndex);
 
             ranges.Add(range);
         }
@@ -616,19 +616,19 @@ public class MaliShaderReport : EditorWindow
         int startIndex = 0;
         int stringIndex = 0;
 
-        if (ranges[0].startLine == 0)
+        if (ranges[0].startIndex == 0)
         {
             startIndex++;
-            stringIndex = ranges[0].endLine;
+            stringIndex = ranges[0].endIndex;
         }
 
         int len = 0;
 
         for (int idx = startIndex; idx < ranges.Count; idx++)
         {
-            len = ranges[idx].startLine - stringIndex;
+            len = ranges[idx].startIndex - stringIndex;
             sb.Append(code, stringIndex, len);
-            stringIndex = ranges[idx].endLine;
+            stringIndex = ranges[idx].endIndex;
         }
 
         if (stringIndex < code.Length - 1)
