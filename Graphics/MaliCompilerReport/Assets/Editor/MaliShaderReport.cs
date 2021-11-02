@@ -562,21 +562,11 @@ public class MaliShaderReport : EditorWindow
         // determine if its hidden by a single comment
         int previousLineIndex = code.LastIndexOf('\n', possibleIndex - 1, possibleIndex);
 
-        int commentStart = code.IndexOf('/', previousLineIndex, possibleIndex - previousLineIndex);
-        while (commentStart != -1)
-        {
-            // if we're at a single line comment just start the search again after the original "/*" we found
-            if (code[commentStart + 1] == '/')
-            {
-                return FindNextValidMultiLineStart(code, possibleIndex + 2);
-            }
+        int commentStart = code.IndexOf("//", previousLineIndex, possibleIndex - previousLineIndex);
 
-            if (possibleIndex - (commentStart + 1) >= 2)
-            {
-                commentStart = code.IndexOf('/', commentStart + 1, possibleIndex - (commentStart + 1));
-            }
-            else
-                break;
+        if(commentStart != -1)
+        {
+            return FindNextValidMultiLineStart(code, possibleIndex + 2);
         }
 
         return possibleIndex;
